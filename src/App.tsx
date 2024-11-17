@@ -1,24 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { ChangeEvent, FormEvent, useState } from "react";
+import TodoList from "./components/TodoList";
+import { useApiKey } from "./hooks/useApiKey";
+
+import "./App.css";
 
 function App() {
+  const { apiKey, setApiKey } = useApiKey();
+  const [apiKeyValue, setApiKeyValue] = useState<string>("");
+
+  const handleOnSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    setApiKey(apiKeyValue);
+  };
+
+  const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setApiKeyValue(e.target.value);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {!apiKey && (
+        <div>
+          <form onSubmit={handleOnSubmit}>
+            <input
+              type="text"
+              value={apiKey}
+              onChange={handleOnChange}
+              placeholder="Enter api key"
+            />
+            <button type="submit">Submit</button>
+          </form>
+          <p>Input API to work around Github blocking commits with API keys.</p>
+        </div>
+      )}
+      {apiKey && <TodoList />}
     </div>
   );
 }
